@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ToDo App</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <!-- KÜTÜPHANELER  -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.7/css/all.css">
+    <!-- KÜTÜPHANELER  -->
+
+    <!-- CSS  -->
+    <style>
+        body
+        {
+        padding-top: 50px;
+        font-family: 'Poppins', sans-serif;
+        } 
+        
+        .bir 
+        {
+        margin-left: 10%;
+        padding-right: 50px;
+        float: left; 
+        width:40%;
+        } 
+        
+        .iki 
+        { 
+        padding-right: 50px;
+        float: left;
+        width:40%;
+        }
+
+        .card {
+        margin-bottom: 10px;
+        }
+
+        input[type=checkbox]:checked + label.strikethrough{
+        text-decoration: line-through;
+        }
+    </style>
+    <!-- CSS  -->
+
+</head>
+<body ng-app="myApp">
+    
+<!-- İLK BÖLÜM • BAŞLANGIÇ  -->
+    <div class="bir" ng-controller="todoCtrl">
+        <h2>To-Do Liste</h2>
+        <form ng-submit="todoAdd()" class="form-inline">
+            <div class="form-group">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" ng-model="todoInput" size="74" placeholder="Yapılması gereken yeni bir iş ekle!" required/>
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <hr />
+        <div ng-repeat="x in todoList" class="list-group-item list-group-item-warning">
+            <div class="form-check"><input class="form-check-input" type="checkbox" ng-model="x.done"/><label class= "strikethrough" ng-bind="x.todoText"></label></div>
+        </div>
+        <br>
+        <button ng-click="remove()" class="btn btn-danger"><i class="fas fa-trash"></i> SEÇİLİ OLANLARI SİL</button>
+    </div>
+<!-- İLK BÖLÜM • BİTİŞ  -->
+
+<!-- İKİNCİ BÖLÜM • BAŞLANGIÇ  -->
+    <div class="iki" ng-controller="todoCtrl2">
+        <h2>To-Do Kartlar</h2>
+        <form ng-submit="todoAdd()" class="form-inline">
+            <div class="form-group">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" ng-model="todoInput" size="74" placeholder="Yapılması gereken yeni bir iş ekle!" required/>
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <hr />
+        <div ng-repeat="x in todoList track by $index" ng-if="$index % 2 == 0" class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header" style="background-color: #ffeeba;"></div>
+                    <div class="card-body">
+                        <p>{{ todoList[$index].todoText }}</p>
+                    </div>
+                </div>
+            </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header" style="background-color: #ffeeba;"></div>
+                <div class="card-body">
+                    <p>{{ todoList[$index + 1].todoText }}</p>
+                </div>
+            </div>
+        </div>
+      </div>
+        <br>
+        <button ng-click="removeall()" class="btn btn-danger"><i class="fas fa-trash"></i> HEPSİNİ SİL</button>
+    </div>
+<!-- İKİNCİ BÖLÜM • BİTİŞ  -->
+
+<!-- SCRIPT BAŞLANGIÇ  -->
+    <script>
+        var app = angular.module('myApp', []);
+        app.controller('todoCtrl', function ($scope) {
+ 
+            $scope.todoList = [
+                {
+                    todoText: 'Ekmek al',
+                    done: false
+                },
+                {
+                    todoText: 'Çöpleri dök',
+                    done: false
+                },
+                {
+                    todoText: 'Ölümün Eşiği kitabında 129.sayfadan devam et',
+                    done: false
+                }
+            ];
+ 
+            $scope.todoAdd = function () {
+ 
+                $scope.todoList.push({ todoText: $scope.todoInput, done: false });
+                $scope.todoInput = "";
+ 
+            };
+ 
+            $scope.remove = function () {
+ 
+                var oldList = $scope.todoList;
+                $scope.todoList = [];
+                angular.forEach(oldList, function (x) {
+                    if (!x.done) $scope.todoList.push(x);
+                });
+            };
+ 
+        });
+
+        app.controller('todoCtrl2', function ($scope) {
+ 
+            $scope.todoList = [
+                {
+                    todoText: "Deniz'e Whatsapp üzerinden mesaj at",
+                },
+                {
+                    todoText: 'Tez için araştırma yapılacak websiteleri araştır',
+                },
+                {
+                    todoText: 'Belgeler/borclar.xlsx dosyasını kontrol et',
+                },
+                {
+                    todoText: 'Drive üzerinden dosya aktarımlarını tamamla',
+                }
+            ];
+ 
+            $scope.todoAdd = function () {
+ 
+                $scope.todoList.push({ todoText: $scope.todoInput, done: false });
+                $scope.todoInput = "";
+ 
+            };
+ 
+            $scope.removeall = function () {
+ 
+                var oldList = $scope.todoList;
+                $scope.todoList = [];
+                angular.forEach(oldList, function (x) {
+                    if (x.done) $scope.todoList.push(x);
+                });
+            };
+ 
+        });
+    </script>
+<!-- SCRIPT BİTİŞ  -->
+
+</body>
+</html>

@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.7/css/all.css">
     <!-- KÜTÜPHANELER  -->
@@ -21,7 +21,7 @@
         font-family: 'Poppins', sans-serif;
         } 
         
-        .bir 
+        .bir, .footer1
         {
         margin-left: 10%;
         padding-right: 50px;
@@ -29,7 +29,7 @@
         width:40%;
         } 
         
-        .iki 
+        .iki, .footer2
         { 
         padding-right: 50px;
         float: left;
@@ -42,6 +42,17 @@
 
         input[type=checkbox]:checked + label.strikethrough{
         text-decoration: line-through;
+        color: grey;
+        }
+
+        footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background-color: #1a78c3;
+        color: white;
+        text-align: center;
         }
     </style>
     <!-- CSS  -->
@@ -85,20 +96,20 @@
             </div>
         </form>
         <hr />
-        <div ng-repeat="x in todoList track by $index" ng-if="$index % 2 == 0" class="row">
+        <div ng-repeat="x in todoList2 track by $index" ng-if="$index % 2 == 0" class="row">
             <div class="col-md-6">
                 <div class="card">
-                    <div class="card-header" style="background-color: #ffeeba;"></div>
+                    <div class="card-header" style="background-color: #ffeeba;"><button ng-click="remove2(x)" class="btn btn-danger" style="float: right;"><i class="fas fa-trash"></i></button></div>
                     <div class="card-body">
-                        <p>{{ todoList[$index].todoText }}</p>
+                        <p>{{ todoList2[$index].todoText }}</p>
                     </div>
                 </div>
             </div>
         <div class="col-md-6">
             <div class="card">
-                <div class="card-header" style="background-color: #ffeeba;"></div>
+                <div class="card-header" style="background-color: #ffeeba;"><button ng-click="remove2(x)" class="btn btn-danger" style="float: right;"><i class="fas fa-trash"></i></button></div>
                 <div class="card-body">
-                    <p>{{ todoList[$index + 1].todoText }}</p>
+                    <p>{{ todoList2[$index + 1].todoText }}</p>
                 </div>
             </div>
         </div>
@@ -112,7 +123,7 @@
     <script>
         var app = angular.module('myApp', []);
         app.controller('todoCtrl', function ($scope) {
- 
+            var todoList = this;
             $scope.todoList = [
                 {
                     todoText: 'Ekmek al',
@@ -134,6 +145,14 @@
                 $scope.todoInput = "";
  
             };
+
+            $scope.remaining = function() {
+            var count = 0;
+            angular.forEach($scope.todoList, function(todo) {
+                count += todo.done ? 0 : 1;
+            });
+            return count;
+            };
  
             $scope.remove = function () {
  
@@ -147,35 +166,51 @@
         });
 
         app.controller('todoCtrl2', function ($scope) {
- 
-            $scope.todoList = [
+            var todoList2 = this;
+            $scope.todoList2 = [
                 {
                     todoText: "Deniz'e Whatsapp üzerinden mesaj at",
+                    done: false
                 },
                 {
                     todoText: 'Tez için araştırma yapılacak websiteleri araştır',
+                    done: false
                 },
                 {
                     todoText: 'Belgeler/borclar.xlsx dosyasını kontrol et',
+                    done: false
                 },
                 {
                     todoText: 'Drive üzerinden dosya aktarımlarını tamamla',
+                    done: false
                 }
             ];
  
             $scope.todoAdd = function () {
  
-                $scope.todoList.push({ todoText: $scope.todoInput, done: false });
+                $scope.todoList2.push({ todoText: $scope.todoInput, done: false });
                 $scope.todoInput = "";
  
             };
+
+            $scope.remaining = function() {
+            var count = 0;
+            angular.forEach($scope.todoList2, function(todo) {
+                count += todo.done ? 0 : 1;
+            });
+            return count;
+            };
+
+            $scope.remove2 = function(item) { 
+            var index = $scope.todoList2.indexOf(item);
+            $scope.todoList2.splice(index, 1);     
+            }
  
             $scope.removeall = function () {
- 
-                var oldList = $scope.todoList;
-                $scope.todoList = [];
+                var oldList = $scope.todoList2;
+                $scope.todoList2 = [];
                 angular.forEach(oldList, function (x) {
-                    if (x.done) $scope.todoList.push(x);
+                    if (x.done) $scope.todoList2.push(x);
                 });
             };
  
@@ -183,5 +218,22 @@
     </script>
 <!-- SCRIPT BİTİŞ  -->
 
+<!-- FOOTER BAŞLANGIÇ -->
+<footer class="page-footer font-small teal pt-4">
+    <div class="container-fluid text-center text-md-left">
+      <div class="row">
+        <div class="footer1" ng-controller="todoCtrl as todoList">
+          <h5 class="text-uppercase font-weight-bold">Liste Verileri</h5>
+          <p>Yapılan İşler: {{ remaining() }} <br>Bekleyen İşler: {{ todoList.length }}</p>
+        </div>
+        <hr class="clearfix w-100 d-md-none pb-3">
+        <div class="footer2" ng-controller="todoCtrl2 as todoList2">
+          <h5 class="text-uppercase font-weight-bold">Kart Verileri</h5>
+          <p>Yapılan İşler: {{ remaining() }}<br>Bekleyen İşler: {{ todoList2.length }}</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+<!-- FOOTER BİTİŞ -->
 </body>
 </html>
